@@ -1,0 +1,36 @@
+{% extends 'main.html' %}
+
+
+{% block content %}
+
+<p>Welcome to home!</p>
+
+<!-- <style>
+    .home-container {
+        display: grid;
+        grid-template-columns: 1fr 3fr;
+    }
+</style> -->
+
+<div class="home-container">
+    
+
+    <div class="topic">
+        {% for t in topics %}
+            <div style="background-color: rgb(187, 230, 187)">
+                <h5>Topic (ID: {{t.id}}): {{t.title}}</h5>
+                <p>Created by: @{{t.creator}}</p>
+                <a href="{% url 'topic' t.id %}">Click to View</a>
+                <br/>
+                {% if request.user == t.creator %}
+                <a href="{% url 'update-topic' t.id %}">Edit</a>
+                <a href="{% url 'delete-topic' t.id %}">Delete</a>
+                {% endif %}
+            </div>
+    
+        {% endfor %}
+    </div>
+</div>
+
+
+{% endblock content %}
