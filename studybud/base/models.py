@@ -1,3 +1,11 @@
+# Accounts:
+#   justin
+#   Justin_Bui13
+
+#   random_man
+#   Random_Password13
+
+
 from django.db import models
 from django.contrib.auth.models import User # Yes, Django does have a built in User class in the admin panel
 

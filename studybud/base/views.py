@@ -33,7 +33,7 @@ def loginPage(request):
         try:
             user = User.objects.get(username=username) # IF the username exists
         except:
-            messages.error(request, 'User does not exist') # Throw an error if user does not exist
+            messages.error(request, 'User does not exist') # Throw a flash message error if user does not exist
 
         # User does exist, so therefore we authenticate their credentials:
         user = authenticate(request, username=username, password=password)
@@ -97,7 +97,12 @@ def home(request):
 def room(request, pk):
     room = Room.objects.get(id=pk) # Getting 1 item based on a uid
 
-    context = {'room': room}
+    # Query children of a specific room (In this case, message is a child of room).
+    # We get all messages from the parent (room) by calling the child class (All lowercase) and '_set.all()'
+    room_messages = room.message_set.all().order_by('-created')
+    
+    
+    context = {'room': room, 'room_messages': room_messages}
 
     return render(request, 'base/room.html', context)
 
