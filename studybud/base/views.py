@@ -6,7 +6,7 @@ from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
-from .models import Room, Topic
+from .models import Room, Topic, Message
 from .forms import RoomForm
 # from django.http import HttpResponse
 
@@ -28,7 +28,7 @@ def loginPage(request):
 
     if request.method == 'POST':
         username = request.POST.get('username').lower()
-        password = request.POST.get('password').lower()
+        password = request.POST.get('password')#.lower()
         
         try:
             user = User.objects.get(username=username) # IF the username exists
@@ -37,6 +37,7 @@ def loginPage(request):
 
         # User does exist, so therefore we authenticate their credentials:
         user = authenticate(request, username=username, password=password)
+
 
         # Seeing of user credentials were correct
         if user is not None:
@@ -50,6 +51,7 @@ def loginPage(request):
 
 
 def logoutUser(request):
+    print('User logged out')
     logout(request) # Deleting session token, therefore logging user out
     return redirect('home')
 
@@ -101,9 +103,16 @@ def room(request, pk):
     # We get all messages from the parent (room) by calling the child class (All lowercase) and '_set.all()'
     room_messages = room.message_set.all().order_by('-created')
     
-    
-    context = {'room': room, 'room_messages': room_messages}
+    if request.method == 'POST':
+        # When user posts a message in a specific room
+        message = Message.objects.create(
+            user=request.user,
+            room=room,
+            body=request.POST.get('body') # The input field is named "body" in room.html
+        )
+        return redirect('room', pk=room.id) # Allows page to fully reload. So we can get back to page with get request
 
+    context = {'room': room, 'room_messages': room_messages}
     return render(request, 'base/room.html', context)
 
 # The @ is a decorator: If the user is NOT logged in, they cannot create/update/delete rooms

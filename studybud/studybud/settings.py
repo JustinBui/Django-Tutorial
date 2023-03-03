@@ -27,7 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -40,6 +39,8 @@ INSTALLED_APPS = [
 
     'base.apps.BaseConfig', # Connecting our base app to the studybud directly
 ]
+
+# AUTH_USER_MODEL = 'base.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

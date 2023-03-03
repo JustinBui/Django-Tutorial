@@ -1,0 +1,17 @@
+List of example users created to test out authentication...
+
+
+------ SUPER USER ------
+Justin_Bui
+Floyd_Holliday13
+------------------------- 
+
+Max_Da_Goat
+Floyd_Holliday14
+
+
+garry11
+minecraft_12345
+
+More_Baked
+ghost_001

@@ -15,9 +15,14 @@ def login_page(request):
     
     # User logging in
     if request.method == 'POST':
-        username = request.POST.get('username').lower()
-        password = request.POST.get('password').lower()
+        username = request.POST.get('username')
+        if username != 'Justin_Bui':
+            username = username.lower()
 
+        password = request.POST.get('password')
+
+        print(f'username: {username}, password: {password}')
+        print('All users', User.objects.all())
         try:
             user = User.objects.get(username=username)
         except:
@@ -25,6 +30,7 @@ def login_page(request):
 
         user = authenticate(request, username=username, password=password)
 
+        print('What is user', user)
         if user is not None:
             login(request, user)
             return redirect('home')
@@ -41,9 +47,6 @@ def logout_user(request):
 
 
 def register_page(request):
-    # Created an example user...
-    # username: max_da_goat
-    # password: Floyd_Holliday14
     form = UserCreationForm()
 
     if request.method == 'POST':
@@ -54,6 +57,8 @@ def register_page(request):
             user.save()
             login(request, user)
             return redirect('home')
+        else:
+            messages.error(request, 'An error occured during registration.')
 
     context = {'form': form}
     return render(request, 'forum/login_register.html', context)
@@ -75,7 +80,8 @@ def home(request):
 
 def topics(request, pk): # Getting a specific topic (Based on primary key)
     topic = Topic.objects.get(id=pk)
-    context = {'topic': topic}
+    topic_messages = topic.message_set.all()
+    context = {'topic': topic, 'topic_messages':topic_messages}
     
     return render(request, 'forum/topic.html', context)
 

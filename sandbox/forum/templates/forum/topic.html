@@ -5,6 +5,27 @@
 <h1>{{topic.title}}</h1>
 <p>Topic created by: {{topic.creator}}</p>
 
+<div class="comment-wrapper">
+    <h3>Comments</h3>
+    <hr/>
 
+    {% for msg in topic_messages %}
+        <div>
+            <small>@{{msg.user}}, {{msg.time_created|timesince}}</small>
+            <p>{{msg.message}}</p>
+            <hr/>
+        </div>
+    {% endfor %}
+</div>
+
+
+{% if request.user.is_authenticated %}
+<div class="comment-form">
+    <form method="POST" action="">
+        {% csrf_token %}
+        <input type="text" name="'body" placeholder="Write your message here..."/>
+    </form>
+</div>
+{% endif %}
 
 {% endblock content %}
