@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponse
 from django.db.models import Q
-from .models import Topic
+from .models import Topic, Message
 from .forms import TopicForm
 
 def login_page(request):
@@ -80,9 +80,17 @@ def home(request):
 
 def topics(request, pk): # Getting a specific topic (Based on primary key)
     topic = Topic.objects.get(id=pk)
-    topic_messages = topic.message_set.all()
-    context = {'topic': topic, 'topic_messages':topic_messages}
+    topic_messages = topic.message_set.all().order_by('-time_created')
+
+    if request.method == 'POST':
+        text = Message.objects.create(
+            user=request.user,
+            topic=topic,
+            message=request.POST.get('body')
+        )
+        return redirect('topic', pk=topic.id)
     
+    context = {'topic': topic, 'topic_messages':topic_messages}
     return render(request, 'forum/topic.html', context)
 
 

@@ -11,7 +11,7 @@
 
     {% for msg in topic_messages %}
         <div>
-            <small>@{{msg.user}}, {{msg.time_created|timesince}}</small>
+            <strong>@{{msg.user}}</strong> <small>({{msg.time_created|timesince}} ago)</small>
             <p>{{msg.message}}</p>
             <hr/>
         </div>
@@ -23,7 +23,7 @@
 <div class="comment-form">
     <form method="POST" action="">
         {% csrf_token %}
-        <input type="text" name="'body" placeholder="Write your message here..."/>
+        <input type="text" name="body" placeholder="Write your message here..."/>
     </form>
 </div>
 {% endif %}
