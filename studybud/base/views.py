@@ -100,9 +100,13 @@ def room(request, pk):
     room = Room.objects.get(id=pk) # Getting 1 item based on a uid
 
     # Query children of a specific room (In this case, message is a child of room).
-    # We get all messages from the parent (room) by calling the child class (All lowercase) and '_set.all()'
+    # We get all messages from the parent (room) by calling the child class (All lowercase) and '_set.all()' 
+    # (NOTE: This is only for one-to-many)
     room_messages = room.message_set.all().order_by('-created')
     
+    # NOTE: We do not have to do _set.all() in this case, as it is a many-to-one relationship 
+    participants = room.participants.all()
+
     if request.method == 'POST':
         # When user posts a message in a specific room
         message = Message.objects.create(
@@ -110,9 +114,11 @@ def room(request, pk):
             room=room,
             body=request.POST.get('body') # The input field is named "body" in room.html
         )
+
+        room.participants.add(request.user) # Adding onto participants list
         return redirect('room', pk=room.id) # Allows page to fully reload. So we can get back to page with get request
 
-    context = {'room': room, 'room_messages': room_messages}
+    context = {'room': room, 'room_messages': room_messages, 'participants':participants}
     return render(request, 'base/room.html', context)
 
 # The @ is a decorator: If the user is NOT logged in, they cannot create/update/delete rooms
@@ -163,3 +169,19 @@ def deleteRoom(request, pk):
         return redirect('home')
         
     return render(request, 'base/delete.html', {'obj':room})
+
+@login_required(login_url='login') 
+def deleteMessage(request, pk):
+    message = Message.objects.get(id=pk)
+
+    # Only the host of the room is allowed to delete
+    if request.user != message.user:
+        return HttpResponse('You are not allowed here boy!')
+    
+    if request.method == 'POST': # Confirm to delete the room
+        message.delete() # Remove that item from the database
+        return redirect('home')
+        
+    return render(request, 'base/delete.html', {'obj':message})
+
+

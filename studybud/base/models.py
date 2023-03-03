@@ -26,7 +26,9 @@ class Room(models.Model):
     # null=True means that there can be blank values on the database
     # blank=True also allows empty sections when submitting forms
     description = models.TextField(null=True, blank=True)
-    # participants = 
+    
+    participants = models.ManyToManyField(User, related_name='participants', blank=True) # Since we already have a user as as foreign key, we will specify related_name to 'participants'
+    
     updated = models.DateTimeField(auto_now=True) # auto_now takes a snapshot for everytime we save an item
     created = models.DateTimeField(auto_now_add=True) # auto_now_add only takes a timestamp when we FIRST create/save this instance
 
